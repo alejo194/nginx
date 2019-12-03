@@ -1,3 +1,4 @@
+```bash
 worker_processes  2;
 worker_cpu_affinity 0101 1010;
 error_log logs/error.log;
@@ -60,3 +61,4 @@ http {
     
     include /etc/nginx/conf.d/*.conf;
 }
+```
