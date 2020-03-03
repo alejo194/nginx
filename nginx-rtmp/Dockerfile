@@ -1,6 +1,6 @@
 FROM debian:jessie
 # Versions of Nginx and nginx-rtmp-module to use
-ENV NGINX_VERSION nginx-1.16.1
+ENV NGINX_VERSION nginx-1.17.8
 ENV NGINX_RTMP_MODULE_VERSION 1.2.1
 ENV FFMPET_VERSION 4.2.1
 
@@ -37,6 +37,7 @@ RUN cd /tmp/build/nginx/${NGINX_VERSION} && \
         --http-client-body-temp-path=/tmp/nginx-client-body \
         --with-file-aio \
         --with-http_ssl_module \
+        --with-http_flv_module \
         --with-threads \
         --with-ipv6 \
         --add-module=/tmp/build/nginx-rtmp-module/nginx-rtmp-module-${NGINX_RTMP_MODULE_VERSION} && \
