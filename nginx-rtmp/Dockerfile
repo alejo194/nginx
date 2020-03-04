@@ -1,12 +1,12 @@
 FROM debian:jessie
 # Versions of Nginx and nginx-rtmp-module to use
 ENV NGINX_VERSION nginx-1.17.8
-ENV NGINX_RTMP_MODULE_VERSION 1.2.1
+#ENV NGINX_RTMP_MODULE_VERSION 1.2.1
 ENV FFMPET_VERSION 4.2.1
 
 # Install dependencies
 RUN apt-get update && \
-    apt-get install -y ca-certificates libpcre3 libpcre3-dev zlib1g-dev openssl libssl-dev wget gcc make bzip2 && \
+    apt-get install -y ca-certificates libpcre3 libpcre3-dev zlib1g-dev openssl libssl-dev wget gcc make bzip2 git && \
     rm -rf /var/lib/apt/lists/*
 
 # Download and decompress Nginx
@@ -16,11 +16,18 @@ RUN mkdir -p /tmp/build/nginx && \
     tar -zxf ${NGINX_VERSION}.tar.gz
 
 # Download and decompress RTMP module
-RUN mkdir -p /tmp/build/nginx-rtmp-module && \
-    cd /tmp/build/nginx-rtmp-module && \
-    wget -O nginx-rtmp-module-${NGINX_RTMP_MODULE_VERSION}.tar.gz https://github.com/arut/nginx-rtmp-module/archive/v${NGINX_RTMP_MODULE_VERSION}.tar.gz && \
-    tar -zxf nginx-rtmp-module-${NGINX_RTMP_MODULE_VERSION}.tar.gz && \
-    cd nginx-rtmp-module-${NGINX_RTMP_MODULE_VERSION}
+#RUN mkdir -p /tmp/build/nginx-rtmp-module && \
+#    cd /tmp/build/nginx-rtmp-module && \
+#    wget -O nginx-rtmp-module-${NGINX_RTMP_MODULE_VERSION}.tar.gz https://github.com/arut/nginx-rtmp-module/archive/v${NGINX_RTMP_MODULE_VERSION}.tar.gz && \
+#    tar -zxf nginx-rtmp-module-${NGINX_RTMP_MODULE_VERSION}.tar.gz && \
+#    cd nginx-rtmp-module-${NGINX_RTMP_MODULE_VERSION}
+
+# Download and decompress FLV module
+RUN mkdir -p /tmp/build/nginx-flv-module && \
+    cd /tmp/build/nginx-flv-module && \
+    git clone https://github.com/winshining/nginx-http-flv-module.git && \
+    cd nginx-http-flv-module && \
+    chmod +x *
 
 # Build and install Nginx
 # The default puts everything under /usr/local/nginx, so it's needed to change
@@ -40,7 +47,8 @@ RUN cd /tmp/build/nginx/${NGINX_VERSION} && \
         --with-http_flv_module \
         --with-threads \
         --with-ipv6 \
-        --add-module=/tmp/build/nginx-rtmp-module/nginx-rtmp-module-${NGINX_RTMP_MODULE_VERSION} && \
+        #--add-module=/tmp/build/nginx-rtmp-module/nginx-rtmp-module-${NGINX_RTMP_MODULE_VERSION} && \
+        --add-module=/tmp/build/nginx-flv-module/nginx-http-flv-module && \
     make -j $(getconf _NPROCESSORS_ONLN) && \
     make install && \
     mkdir /var/lock/nginx && \
